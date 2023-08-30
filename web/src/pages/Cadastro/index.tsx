@@ -4,6 +4,9 @@ import { Step, StepLabel, Stepper } from "@mui/material";
 import Botao from "../../components/Botao";
 import { useState } from "react";
 import CampoDigitacao from "../../components/CampoDigitacao";
+import IClinica from "../../types/IClinina";
+import usePost from "../../usePost";
+import { useNavigate } from "react-router-dom";
 
 const Imagem = styled.img`
   padding: 2em 0;
@@ -57,10 +60,34 @@ const Cadastro = () => {
     const [numero, setNumero] = useState('');
     const [complemento, setComplemento] = useState('');
     const [estado, setEstado] = useState('');
+    const navigate = useNavigate();
+    const { cadastrarDados, erro, sucesso } = usePost();
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault(); // previne o envio padrão do formulário
 
+
+
+        const clinica: IClinica = {
+            email: email,
+            nome: nome,
+            senha: senha,
+            endereco: {
+                cep: cep,
+                rua: rua,
+                numero: numero,
+                complemento: complemento,
+                estado: estado
+            }
+        }
+        if (etapaAtiva !== 0) {
+            try {
+                cadastrarDados({ url: 'clinica', dados: clinica })
+                navigate('/login');
+            } catch (erro) {
+                erro && alert('Erro ao cadastrar os dados')
+            }
+        }
 
         setEtapaAtiva(etapaAtiva + 1); // atualiza o estado da etapa para a próxima etapa
     }
