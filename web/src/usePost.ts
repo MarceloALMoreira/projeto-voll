@@ -5,7 +5,10 @@ const usePost = () => {
     const [erro, setErro] = useState('');
 
     // Qunado eu fazer uma requisição, em caso de sucesso vai trazer para essa  variavel...
-    const [sucesso, setSucesso] = useState(false)
+    const [sucesso, setSucesso] = useState(false);
+
+    // 
+    const [resposta, setResposta] = useState('');
 
 
     // A função usePost() é responsável por enviar os dados do usuário para um servidor remoto usando uma solicitação HTTP POST.
@@ -14,7 +17,7 @@ const usePost = () => {
     async function cadastrarDados<T>({ url, dados }:
         { url: string, dados: T }) {
         try {
-            await fetch(`http://localhost:8080/${url}`, {
+            const resposta = await fetch(`http://localhost:8080/${url}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -22,11 +25,13 @@ const usePost = () => {
                 body: JSON.stringify(dados)
             })
             setSucesso(true);
+            const respostaConvertida = await resposta.json();
+            setResposta(respostaConvertida.token);
         } catch (error) {
             setErro('Não foi possivel enviar os dados')
         }
     }
-    return {cadastrarDados, sucesso, erro}
+    return { cadastrarDados, sucesso, erro, resposta }
 }
 
 export default usePost
